@@ -134,35 +134,36 @@ function ShowInfoComponent({ authResponse, favMoviesList, tvShows, postFavShow, 
                 </Grid>
                 <Grid item xs={12} sm={12} >
                     <h3 className="page_title">Cast</h3>
-                    <div className="cast_list" >
-                        {cast && cast.map((cast) => (
-                            <div key={cast.id} >
-                                {cast.profile_path !== null ?
-                                    <img className="showinfo_content" src={getImageUrl('500', cast.profile_path)} alt={cast.profile_path} style={{ width: 150, height: 200 }} /> :
-                                    <div>
-                                        {cast.gender === 2 ?
-                                            <img style={{ width: 150, height: 200 }} src={Male} alt={cast.original_name} /> :
-                                            <img style={{ width: 150, height: 200 }} src={Female} alt={cast.original_name} />}
-                                    </div>
-                                }
+                    {cast.length ?
+                        <div className="cast_list" >
+                            {cast.map((cast) => (
+                                <div key={cast.id} >
+                                    {cast.profile_path !== null ?
+                                        <img className="showinfo_content" src={getImageUrl('500', cast.profile_path)} alt={cast.profile_path} style={{ width: 150, height: 200 }} /> :
+                                        <div>
+                                            {cast.gender === 2 ?
+                                                <img style={{ width: 150, height: 200 }} src={Male} alt={cast.original_name} /> :
+                                                <img style={{ width: 150, height: 200 }} src={Female} alt={cast.original_name} />}
+                                        </div>
+                                    }
 
-                                <p className="center-text">{cast.original_name}</p>
-                            </div>
-                        ))}
-                    </div>
+                                    <p className="center-text">{cast.original_name}</p>
+                                </div>
+                            ))}
+                        </div> : <h5>There are no results!</h5>}
                 </Grid>
                 <Grid item xs={12} sm={12} >
                     <h3 className="page_title">Recommendations</h3>
-
-                    <div className="cast_list" >
-                        {recommendations && recommendations.map((recommendation) => (
-                            <div key={recommendation.id} >
-                                <Link to={`${recommendation.id}`} >
-                                    <img className="showinfo_content" src={getImageUrl('500', recommendation.poster_path)} alt={recommendation.profile_path} style={{ width: 150, height: 200 }} />
-                                </Link>
-                            </div>
-                        ))}
-                    </div>
+                    {recommendations.length ?
+                        <div className="cast_list" >
+                            {recommendations.map((recommendation) => (
+                                <div key={recommendation.id} >
+                                    <Link to={`${recommendation.id}`} >
+                                        <img className="showinfo_content" src={getImageUrl('500', recommendation.poster_path)} alt={recommendation.profile_path} style={{ width: 150, height: 200 }} />
+                                    </Link>
+                                </div>
+                            ))}
+                        </div> : <h5>There are no results!</h5>}
                 </Grid>
             </Grid>
         )
