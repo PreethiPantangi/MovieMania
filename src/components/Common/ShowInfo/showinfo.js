@@ -65,7 +65,8 @@ function ShowInfoComponent({ authResponse, favMoviesList, tvShows, postFavShow, 
     }, [params.showId, favMoviesList, tvShows])
 
 
-    if (showDetails && isreceivedShowDetails) {
+    // && isreceivedShowDetails
+    if (showDetails) {
         let year = typeof showDetails.release_date === 'string' ? showDetails.release_date.split("-")[0] : ""
         let runtime = showDetails.runtime;
         var hours = Math.floor(runtime / 60);
