@@ -1,0 +1,10 @@
+.favMovies{
+    display: flex;
+    justify-content: space-between;
+    width: 95%;
+    overflow: auto;
+}
+
+.profile_fav_show_images {
+    padding: 2%;
+}

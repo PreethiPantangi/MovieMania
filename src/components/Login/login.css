@@ -1,0 +1,15 @@
+.login_component {
+    border: 1px solid #d6dbe0;
+    padding: 1%;
+    width: 50vw;
+    margin: 0 auto;
+}
+
+.error-message, .error-message-create_account {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.error-message {
+    color: red;
+}

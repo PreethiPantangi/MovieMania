@@ -1,0 +1,8 @@
+.footer_component {
+    position: fixed;
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   background-color: #dfe4e8;
+   text-align: center;
+}

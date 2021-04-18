@@ -1,0 +1,20 @@
+.showslist {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.show_card {
+    background-color: rgb(228, 224, 224);
+    margin: 1%;
+}
+
+.showslist_image {
+    padding: 10px;
+}
+
+.showlist_name {
+    flex-wrap: wrap;
+    width: 250px;
+    text-align: center;
+}

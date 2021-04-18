@@ -1,0 +1,12 @@
+.categories_component {
+    display: flex;
+    justify-content: space-between;
+    overflow: auto;
+    position: absolute;
+    width: 95%;
+}
+
+
+.categories_image {
+    padding: 3% !important;
+}

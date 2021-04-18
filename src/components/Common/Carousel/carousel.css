@@ -1,0 +1,15 @@
+.carousel_component {
+    display: flex;
+    justify-content: space-between;
+    overflow: auto;
+    position: absolute;
+    width: 95%;
+}
+
+.carousel_image {
+    justify-content: space-between;
+}
+
+.carousel_item {
+    padding: 1%;
+}
