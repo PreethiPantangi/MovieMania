@@ -18,7 +18,7 @@ function ShowInfoComponent({ authResponse, favMoviesList, tvShows, postFavShow, 
 
     const [showDetails, setShowDetails] = useState({})
     const [isFav, setIsFav] = useState(false);
-    const [isreceivedShowDetails, setIsreceivedShowDetails] = useState(false);
+    // const [isreceivedShowDetails, setIsreceivedShowDetails] = useState(false);
     const [cast, setCast] = useState({});
     const [recommendations, setRecommendations] = useState({})
 
@@ -40,7 +40,7 @@ function ShowInfoComponent({ authResponse, favMoviesList, tvShows, postFavShow, 
         axios.get(getShowDetailsUrl(showId))
             .then(res => {
                 setShowDetails(res.data);
-                setIsreceivedShowDetails(true)
+                // setIsreceivedShowDetails(true)
                 favMoviesList.forEach(favMovie => {
                     if (parseInt(favMovie.id) === parseInt(showId)) {
                         setIsFav(true)
@@ -59,7 +59,7 @@ function ShowInfoComponent({ authResponse, favMoviesList, tvShows, postFavShow, 
                 })
             })
             .catch(err => {
-                setIsreceivedShowDetails(err.response)
+                // setIsreceivedShowDetails(err.response)
             })
 
     }, [params.showId, favMoviesList, tvShows])
