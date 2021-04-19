@@ -41,19 +41,21 @@ function ShowInfoComponent({ authResponse, favMoviesList, tvShows, postFavShow, 
             .then(res => {
                 setShowDetails(res.data);
                 // setIsreceivedShowDetails(true)
-                if (favMoviesList) {
-                    favMoviesList.forEach(favMovie => {
-                        if (parseInt(favMovie.id) === parseInt(showId)) {
-                            setIsFav(true)
-                        }
-                    });
-                } else if (tvShows) {
-                    console.log(tvShows);
-                    tvShows.forEach(tvShow => {
-                        if (parseInt(tvShow.id) === parseInt(showId)) {
-                            setIsFav(true)
-                        }
-                    });
+                if (authResponse.success) {
+                    if (favMoviesList) {
+                        favMoviesList.forEach(favMovie => {
+                            if (parseInt(favMovie.id) === parseInt(showId)) {
+                                setIsFav(true)
+                            }
+                        });
+                    } else if (tvShows) {
+                        console.log(tvShows);
+                        tvShows.forEach(tvShow => {
+                            if (parseInt(tvShow.id) === parseInt(showId)) {
+                                setIsFav(true)
+                            }
+                        });
+                    }
                 }
                 axios.get(getCreditsUrl(showId)).then((res) => {
                     setCast(res.data.cast)
@@ -66,7 +68,7 @@ function ShowInfoComponent({ authResponse, favMoviesList, tvShows, postFavShow, 
                 // setIsreceivedShowDetails(err.response)
             })
 
-    }, [params.showId, favMoviesList, tvShows])
+    }, [params.showId, favMoviesList, tvShows, authResponse])
 
 
     // && isreceivedShowDetails
