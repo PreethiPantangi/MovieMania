@@ -4,6 +4,7 @@ import { Redirect } from 'react-router';
 import { validateUser } from '../../redux'
 import './login.css'
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Button from '@material-ui/core/Button';
 
 function Login(props) {
 
@@ -22,18 +23,21 @@ function Login(props) {
                     <label htmlFor="exampleInputPassword1">Password</label>
                     <input type="password" className="form-control" id="exampleInputPassword1" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" />
                 </div>
-                <button type="submit" className="btn btn-primary" onClick={() => props.authenticateUser(username, password)}>Login</button>
+                <Button variant="contained" onClick={() => props.authenticateUser(username, password)}>
+                    Login
+                </Button>
+                {/* <button type="submit" className="btn btn-primary" onClick={() => props.authenticateUser(username, password)}>Login</button> */}
                 {props.isLoading ? <LinearProgress /> : null}
                 {!props.isLoggedOut && props.redirectTo ? <Redirect to={props.redirectTo} /> : null}
             </form>
+            <div className="error-message-create_account" >
+                <div>Ensure you use the MovieDB credentials.</div>
+                Click <a href="https://www.themoviedb.org/login" rel="noreferrer" target="_blank">here</a> to create an account.
+            </div>
             {props.status_code === 30 ?
                 <div>
                     <div>
                         <div className="error-message" ><small>Invalid username and/or password: You did not provide a valid login.</small></div>
-                        <div className="error-message" ><small>Ensure you use the MovieDB credentials.</small></div>
-                    </div>
-                    <div className="error-message-create_account" >
-                        Click <a href="https://www.themoviedb.org/login" rel="noreferrer" target="_blank">here</a> to create an account.
                     </div>
                 </div>
                 : null}

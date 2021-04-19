@@ -13,3 +13,8 @@
 .error-message {
     color: red;
 }
+
+.MuiButton-contained {
+    background-color: #007bff !important;
+    color: white !important;
+}
