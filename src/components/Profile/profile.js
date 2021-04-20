@@ -5,9 +5,11 @@ import { getUserDetails } from '../../redux'
 import { getImageUrl } from '../../redux/endpoints';
 import { Link } from 'react-router-dom'
 import noMovieImage from '../../noimg.png'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 
-function ProfileComponent({ getUserDetails, favMovies, tvShows }) {
+function ProfileComponent({ getUserDetails, favMovies, tvShows, favMoviesLoading, tvMoviesLoading, loading }) {
+
 
     useEffect(() => {
         getUserDetails();
@@ -18,7 +20,7 @@ function ProfileComponent({ getUserDetails, favMovies, tvShows }) {
             <div className="favMovies_profile_component">
                 <h4>Your favourite movies</h4>
                 <div>
-                    {favMovies && favMovies.results &&
+                    {!favMoviesLoading && favMovies && favMovies.results &&
                         <div className="favMovies">
                             {favMovies && favMovies.results && favMovies.results.map(favMovie =>
                                 <Link key={favMovie.id} to={`/movie/${favMovie.id}`} >
@@ -32,12 +34,15 @@ function ProfileComponent({ getUserDetails, favMovies, tvShows }) {
                             {favMovies && favMovies.results && favMovies.results.length === 0 ? <h6>No favourite movies!</h6> : null}
                         </div>
                     }
+                    {favMoviesLoading ? <div className="" >
+                        <CircularProgress />
+                    </div> : null}
                 </div>
             </div>
             <div className="favMovies_profile_component">
                 <h4>Your favourite Tv shows</h4>
                 <div>
-                    {tvShows && tvShows.results && <div className="favMovies">
+                    {!tvMoviesLoading && tvShows && tvShows.results && <div className="favMovies">
                         {tvShows && tvShows.results && tvShows.results.map(tvShow =>
                             <Link key={tvShow.id} to={`/tv/${tvShow.id}`} >
                                 {tvShow.poster_path ?
@@ -48,6 +53,9 @@ function ProfileComponent({ getUserDetails, favMovies, tvShows }) {
                         )}
                         {tvShows && tvShows.results && tvShows.results.length === 0 ? <h6>No favourite tv shows!</h6> : null}
                     </div>}
+                    {tvMoviesLoading ? <div className="" >
+                        <CircularProgress />
+                    </div> : null}
                 </div>
             </div>
         </div>
@@ -58,7 +66,10 @@ const mapStateToProps = (state) => {
     return {
         profile: state.profile.profile,
         favMovies: state.profile.favMovies,
-        tvShows: state.profile.tvShows
+        tvShows: state.profile.tvShows,
+        favMoviesLoading: state.profile.favMoviesLoading,
+        tvMoviesLoading: state.profile.tvMoviesLoading,
+        loading: state.profile.loading
     }
 }
 

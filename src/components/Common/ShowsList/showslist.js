@@ -1,25 +1,36 @@
 import './showslist.css'
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { getShows } from '../../../redux'
-import { getImageUrl } from '../../../redux/endpoints';
+import React, { useEffect, useState } from 'react';
+import { getImageUrl, getShowsByGenreIdUrl } from '../../../redux/endpoints';
 import { Link, useParams } from 'react-router-dom';
+import axios from 'axios';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
-const ShowsListComponent = ({ getShows, shows }) => {
+const ShowsListComponent = () => {
 
     let genreId = useParams().genreId;
     let genreName = useParams().genreName;
     let type = useParams().type;
+    const [receivedData, setReceivedData] = useState(false)
+
+    const [shows, setShows] = useState({})
+
 
     useEffect(() => {
-        getShows(genreId)
-    }, [genreId, genreName, getShows])
+        axios.get(getShowsByGenreIdUrl(genreId))
+            .then(res => {
+                setShows(res.data);
+                setReceivedData(true)
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    })
 
     return (
         <div>
             <h4>{genreName}</h4>
             <div className="showslist" >
-                {shows && shows.results && shows.results.map(show =>
+                {receivedData && shows && shows.results && shows.results.map(show =>
                     <Link key={show.id} to={`/${type}/${show.id}`} >
                         <div key={show.id} className="show_card" >
                             <img className="showslist_image" src={getImageUrl('500', show.poster_path)} alt={show.original_title} style={{ width: 250, height: 400 }} />
@@ -27,24 +38,14 @@ const ShowsListComponent = ({ getShows, shows }) => {
                         </div>
                     </Link>
                 )}
+                {!receivedData ?
+                    <div className="loading-data" >
+                        <CircularProgress />
+                    </div>
+                    : null}
             </div>
         </div>
     );
 }
 
-
-export const mapStateToProps = state => {
-    return {
-        shows: state.shows.shows
-    }
-}
-
-export const mapDispatchToProps = dispatch => {
-    return {
-        getShows: (genreID) => {
-            dispatch(getShows(genreID));
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ShowsListComponent);
+export default ShowsListComponent;

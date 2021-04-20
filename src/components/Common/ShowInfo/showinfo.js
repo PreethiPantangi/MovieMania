@@ -11,14 +11,16 @@ import { Link } from 'react-router-dom';
 import Male from '../../../male.png'
 import Female from '../../../female.jpg'
 import noMovieImage from '../../../noimg.png'
-import { postFavShow } from '../../../redux/account/accountactions'
+import { postFavShow, postMovieToWatchList } from '../../../redux/account/accountactions'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
-function ShowInfoComponent({ authResponse, favMoviesList, tvShows, postFavShow, response }) {
+
+function ShowInfoComponent({ authResponse, favMoviesList, favTvShows, postFavShow, postMovieToWatchList }) {
 
 
     const [showDetails, setShowDetails] = useState({})
     const [isFav, setIsFav] = useState(false);
-    // const [isreceivedShowDetails, setIsreceivedShowDetails] = useState(false);
+    const [isreceivedShowDetails, setIsreceivedShowDetails] = useState(false);
     const [cast, setCast] = useState({});
     const [recommendations, setRecommendations] = useState({})
 
@@ -37,30 +39,40 @@ function ShowInfoComponent({ authResponse, favMoviesList, tvShows, postFavShow, 
     useEffect(() => {
         let showId = params.showId;
 
-        axios.get(getShowDetailsUrl(showId))
+        if (authResponse.success) {
+            if (favMoviesList && favMoviesList.length !== 0) {
+                console.log(favMoviesList, favTvShows);
+                favMoviesList.forEach(favMovie => {
+                    if (parseInt(favMovie.id) === parseInt(showId)) {
+                        setIsFav(true)
+                    }
+                });
+            } else if (favTvShows && favTvShows.length !== 0) {
+                console.log(favTvShows);
+                favTvShows.forEach(tvShow => {
+                    if (parseInt(tvShow.id) === parseInt(showId)) {
+                        setIsFav(true)
+                    }
+                });
+            }
+        }
+
+        axios.get('http://api.themoviedb.org/3/tv/60735/season/1?api_key=80ba168b92a6d9e727033838c5905b4b').then(res => {
+            console.log(res.data);
+        })
+            .catch(err => {
+                console.log(err);
+            })
+
+        axios.get(getShowDetailsUrl(type, showId))
             .then(res => {
                 setShowDetails(res.data);
-                // setIsreceivedShowDetails(true)
-                if (authResponse.success) {
-                    if (favMoviesList) {
-                        favMoviesList.forEach(favMovie => {
-                            if (parseInt(favMovie.id) === parseInt(showId)) {
-                                setIsFav(true)
-                            }
-                        });
-                    } else if (tvShows) {
-                        console.log(tvShows);
-                        tvShows.forEach(tvShow => {
-                            if (parseInt(tvShow.id) === parseInt(showId)) {
-                                setIsFav(true)
-                            }
-                        });
-                    }
-                }
-                axios.get(getCreditsUrl(showId)).then((res) => {
+                axios.get(getCreditsUrl(type, showId)).then((res) => {
+                    console.log('in credits & recc');
                     setCast(res.data.cast)
-                    axios.get(getRecommendationsUrl(showId)).then((res) => {
-                        setRecommendations(res.data.results)
+                    axios.get(getRecommendationsUrl(type, showId)).then((res) => {
+                        setRecommendations(res.data.results);
+                        setIsreceivedShowDetails(true)
                     })
                 })
             })
@@ -68,12 +80,12 @@ function ShowInfoComponent({ authResponse, favMoviesList, tvShows, postFavShow, 
                 // setIsreceivedShowDetails(err.response)
             })
 
-    }, [params.showId, favMoviesList, tvShows, authResponse])
+    }, [params.showId, favMoviesList, favTvShows, authResponse, type])
 
 
-    // && isreceivedShowDetails
-    if (showDetails) {
-        let year = typeof showDetails.release_date === 'string' ? showDetails.release_date.split("-")[0] : ""
+
+    if (showDetails && isreceivedShowDetails) {
+        let year = typeof showDetails.release_date === 'string' ? showDetails.release_date.split("-")[0] : "";
         let runtime = showDetails.runtime;
         var hours = Math.floor(runtime / 60);
         var minutes = Math.floor(runtime % 60);
@@ -87,17 +99,32 @@ function ShowInfoComponent({ authResponse, favMoviesList, tvShows, postFavShow, 
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <Grid item xs={12}>
-                        <h3 className="page_title">{showDetails.original_title}</h3>
+                        {type === 'movie' ?
+                            <h3 className="page_title">{showDetails.original_title}</h3> :
+                            <h3 className="page_title">{showDetails.original_name}</h3>}
                     </Grid>
                     <Grid item xs={12}>
                         <h5>{showDetails.tagline}</h5>
                     </Grid>
                     <Grid container spacing={4}>
                         <Grid item xs={6} sm={3}>
-                            {year}
+                            {type === 'movie' ? year :
+                                <div>
+                                    <div>Total Seasons</div>
+                                    <div>
+                                        {showDetails.number_of_seasons}
+                                    </div>
+                                </div>}
                         </Grid>
                         <Grid item xs={6} sm={3}>
-                            {formattedTime}
+                            {type === 'movie' ? formattedTime :
+                                <div>
+                                    <div>Total episodes</div>
+                                    <div>
+                                        {showDetails.number_of_episodes}
+                                    </div>
+                                </div>
+                            }
                         </Grid>
                         <Grid item xs={6} sm={3}>
                             {showDetails.vote_average}<Rating readOnly name="customized-10" defaultValue={1} max={1} />
@@ -125,7 +152,7 @@ function ShowInfoComponent({ authResponse, favMoviesList, tvShows, postFavShow, 
                                     <Rating name="customized-10" defaultValue={0} max={10} />
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <Button className="showinfo_grid_button" variant="outlined">Add to watchlist</Button>
+                                    <Button className="showinfo_grid_button" onClick={() => { postMovieToWatchList(type, params.showId, true); }} variant="outlined">Add to watchlist</Button>
                                 </Grid>
                                 <Grid item xs={4}>
                                     {isFav ?
@@ -133,11 +160,33 @@ function ShowInfoComponent({ authResponse, favMoviesList, tvShows, postFavShow, 
                                         <Button className="showinfo_grid_button" onClick={() => { postFavShow(type, params.showId, true); setIsFav(true) }} variant="outlined">Add to favourite</Button>}
                                 </Grid>
                             </Grid>
-
                             : null}
 
                     </Grid>
                 </Grid>
+                {type === 'tv' ?
+                    <Grid item xs={12} sm={12} >
+                        <h3 className="page_title">Seasons</h3>
+                        {showDetails.seasons.length ?
+                            <div className="cast_list" >
+                                {showDetails.seasons.map((season) => (
+                                    <div key={season.id} >
+                                        {season.poster_path !== null ?
+                                            <img className="showinfo_content" src={getImageUrl('500', season.poster_path)} alt={season.name} style={{ width: 150, height: 200 }} /> :
+                                            <div>
+                                                {season.gender === 2 ?
+                                                    <img style={{ width: 150, height: 200 }} src={Male} alt={season.original_name} /> :
+                                                    <img style={{ width: 150, height: 200 }} src={Female} alt={season.original_name} />}
+                                            </div>
+                                        }
+
+                                        <p className="center-text">{season.name}</p>
+                                        <p>Total episodes: {season.episode_count}</p>
+                                    </div>
+                                ))}
+                            </div> : <h5>There are no results!</h5>}
+                    </Grid>
+                    : null}
                 <Grid item xs={12} sm={12} >
                     <h3 className="page_title">Cast</h3>
                     {cast.length ?
@@ -165,7 +214,10 @@ function ShowInfoComponent({ authResponse, favMoviesList, tvShows, postFavShow, 
                             {recommendations.map((recommendation) => (
                                 <div key={recommendation.id} >
                                     <Link to={`${recommendation.id}`} >
-                                        <img className="showinfo_content" src={getImageUrl('500', recommendation.poster_path)} alt={recommendation.profile_path} style={{ width: 150, height: 200 }} />
+                                        {recommendation.poster_path ?
+                                            <img className="showinfo_content" src={getImageUrl('500', recommendation.poster_path)} alt={recommendation.poster_path} style={{ width: 150, height: 200 }} /> :
+                                            <img className="showinfo_image" src={noMovieImage} alt={recommendation.profile_path} style={{ width: 150, height: 200 }} />}
+                                        <p className="center-text">{recommendation.original_title}</p>
                                     </Link>
                                 </div>
                             ))}
@@ -175,7 +227,9 @@ function ShowInfoComponent({ authResponse, favMoviesList, tvShows, postFavShow, 
         )
     } else {
         return (
-            <div>No info found!</div>
+            <div className="loading-data" >
+                <CircularProgress />
+            </div>
         );
     }
 }
@@ -184,8 +238,9 @@ const mapStateToProps = state => {
     return {
         authResponse: state.authenticateUser.authResponse,
         favMoviesList: state.profile.favMovies.results,
-        tvShows: state.profile.tvShows.results,
-        response: state.account.response
+        favTvShows: state.profile.tvShows.results,
+        responseFavShow: state.account.responseFavShow,
+        responseWatchlistShow: state.account.responseWatchlistShow
     }
 }
 
@@ -193,6 +248,9 @@ const mapDispatchToProps = dispatch => {
     return {
         postFavShow: (type, showid, isFav) => {
             dispatch(postFavShow(type, showid, isFav))
+        },
+        postMovieToWatchList: (type, showId, isFav) => {
+            dispatch(postMovieToWatchList(type, showId, isFav))
         }
     }
 }

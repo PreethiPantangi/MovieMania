@@ -8,6 +8,8 @@ function CategoriesComponent({ type, category, title }) {
 
     const [movies, setMovies] = useState([])
 
+    console.log('type categories - ', type);
+
     useEffect(() => {
         axios.get(getMoviesOrTvShowsUrl(type, category))
             .then(res => {

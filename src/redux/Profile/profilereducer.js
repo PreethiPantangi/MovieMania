@@ -27,6 +27,7 @@ const profileReducer = (state = initialProfileState, action) => {
                 loading: false,
                 tvShows: action.payload
             }
+
         default:
             return state;
     }

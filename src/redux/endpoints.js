@@ -43,20 +43,25 @@ export function getShowsByGenreIdUrl(genreId) {
 }
 
 
-export function getShowDetailsUrl(showId) {
-    return `https://api.themoviedb.org/3/movie/${showId}`
+export function getShowDetailsUrl(type, showId) {
+    return `https://api.themoviedb.org/3/${type}/${showId}`
 }
 
-export function getCreditsUrl(movieId) {
-    return `https://api.themoviedb.org/3/movie/${movieId}/credits`
+export function getCreditsUrl(type, movieId) {
+    return `https://api.themoviedb.org/3/${type}/${movieId}/credits`
 }
 
-export function getRecommendationsUrl(showId) {
-    return `https://api.themoviedb.org/3/movie/${showId}/recommendations`
+export function getRecommendationsUrl(type, showId) {
+    return `https://api.themoviedb.org/3/${type}/${showId}/recommendations`
 }
 
 export function postFavouriteShowUrl(sessionId) {
     return `https://api.themoviedb.org/3/account/${localStorage.getItem('account_id')}/favorite?session_id=${sessionId}`
+
+}
+
+export function postShowToWatchlistUrl(sessionId) {
+    return `https://api.themoviedb.org/3/account/${localStorage.getItem('account_id')}/watchlist?session_id=${sessionId}`
 
 }
 

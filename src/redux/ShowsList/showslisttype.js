@@ -1,1 +1,0 @@
-export const GET_SHOWS_LIST = 'GET_SHOWS_LIST';
